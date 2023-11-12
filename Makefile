@@ -1,4 +1,5 @@
 SRC_DIR = src
+OUT_DIR = build
 CC		:= gcc
 CFLAGS  += -Wall
 CSTD	?= -std=c99
@@ -9,10 +10,11 @@ BINS = $(notdir $(patsubst %.c, %, $(SRCS)))
 all: $(BINS)
 
 $(BINS): %: $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS) $< -o build/$@
+	@mkdir -p $(OUT_DIR)
+	$(CC) $(CFLAGS) $< -o $(OUT_DIR)/$@
 
 clean: 
-	rm build/*
+	rm -r $(OUT_DIR)
 
 print-%  :
 	@echo $* = $($*)
