@@ -19,20 +19,17 @@ static int get_line(char s[], int lim) {
     return i;
 }
 
+// replace tabs for spaces, line by line
 static void detab(char to[], const char from[]) {
     int i = 0;  // Input index (from)
     int o = 0;  // Output index (to)
-    int offset = 0;
-    int spaces;
     
     while (from[i] != '\n') {
         if (from[i] == '\t'){
-            spaces = TAB_SIZE - ((i + offset) % TAB_SIZE);
-            printf("i = %d, spaces = %d, offset = %d\n", i, spaces, offset);
-            
+            int spaces = TAB_SIZE - (o % TAB_SIZE);
+
             for (int j = 0; j < spaces; j++)
                 to[o++] = ' ';
-            offset = (offset + TAB_SIZE - (i % TAB_SIZE) - 1) % TAB_SIZE;
         }
         else {
             to[o++] = from[i];
