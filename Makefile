@@ -16,5 +16,5 @@ $(BINS): %: $(SRC_DIR)/%.c
 clean: 
 	rm -r $(OUT_DIR)
 
-print-%  :
+print-%:
 	@echo $* = $($*)
