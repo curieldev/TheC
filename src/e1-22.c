@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#define IOS         1       // Index offset, arrays start from 0
+
 #define MAX_LINE    1000    // Maximum input line length
 #define LINE_SIZE   80      // Maximum visible characters in an unfolded line
 #define IGNORED     2       // Newline and NULL are ignored for line size
@@ -16,7 +18,7 @@
 static int get_line(char s[], int lim) {
     int c, i;
 
-    for (i = 0; i < lim - 1 && (c = getchar()) != EOF && c != '\n'; ++i)
+    for (i = 0; i < lim - IOS && (c = getchar()) != EOF && c != '\n'; ++i)
         s[i] = c;
 
     if (c == '\n') {
@@ -28,16 +30,13 @@ static int get_line(char s[], int lim) {
     return i;
 }
 
-// is the line easy to fold? replace a character e.g. a blank with a newline
-static int is_easy_fold(const char s[]) {
-    int i;
+// can the line be fold by replacing a character e.g. a blank with a newline?
+static bool is_easy_fold(const char s[], int *pos) {
+    for (*pos = FOLD_MARGIN - IOS; *pos >= 0; (*pos)--)
+        if (s[*pos] == ' ' || s[*pos] == '\t')
+            return true;
 
-    for (i = FOLD_MARGIN - 1; i >= 0; i--)
-        if (s[i] == ' ' || s[i] == '\t')
-            break;
-
-    printf("%d\n", i);
-    return i;
+    return false;
 }
 
 static void fold(char to[], const char from[]) {
@@ -51,8 +50,8 @@ static void fold(char to[], const char from[]) {
     // - ' ', '\t', "&&" with ' ' before or after,
 
     while (from[i] != '\0') {
-        bool near_limit = (o % LINE_SIZE) > (LINE_SIZE - FOLD_MARGIN - 1); 
-        int fold_index;
+        bool near_limit = (o % LINE_SIZE) > (LINE_SIZE - FOLD_MARGIN - IOS); 
+        int fold_pos;
 
         if (!near_limit) {
             if (from[i] != '\n')
@@ -60,9 +59,9 @@ static void fold(char to[], const char from[]) {
             else
                 i++;
         }
-        else if ((fold_index = is_easy_fold(&from[i])) >= 0) {
-            for (int j = 0; j < FOLD_MARGIN; j++) {
-                to[o++] = j == fold_index ? '\n' : from[i++];
+        else if (is_easy_fold(&from[i], &fold_pos)) {
+            for (int j = 0; j < FOLD_MARGIN; j++, i++) {
+                to[o++] = (j == fold_pos) ? '\n' : from[i];
             }
         }
     }
@@ -88,5 +87,5 @@ int main(void) {
     return 0;
 }
 
-// This is a long test line to fold, let's see if this code actually works, but probably it won't
+// This is a long test line to fold, let's see if this code actually works, but probably it won't, at least not the first time.
 
