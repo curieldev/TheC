@@ -30,7 +30,7 @@ static int get_line(char s[], int lim) {
     return i;
 }
 
-// can the line be fold by replacing a character e.g. a blank with a newline?
+// Can the line be folded by replacing a character e.g. a blank with a newline?
 static bool is_easy_fold(const char s[], int *pos) {
     for (*pos = FOLD_MARGIN - IOS; *pos >= 0; (*pos)--)
         if (s[*pos] == ' ' || s[*pos] == '\t')
@@ -60,9 +60,14 @@ static void fold(char to[], const char from[]) {
                 i++;
         }
         else if (is_easy_fold(&from[i], &fold_pos)) {
-            for (int j = 0; j < FOLD_MARGIN; j++, i++) {
+            for (int j = 0; j < FOLD_MARGIN; j++, i++)
                 to[o++] = (j == fold_pos) ? '\n' : from[i];
-            }
+        }
+        else {
+            for (int j = 0; j < FOLD_MARGIN - 1; j++)
+                to[o++] = from[i++];
+
+            to[o++] = '\n';
         }
     }
     to[o++] = '\n';
@@ -88,4 +93,4 @@ int main(void) {
 }
 
 // This is a long test line to fold, let's see if this code actually works, but probably it won't, at least not the first time.
-
+// https://www.google.com/search?q=word+separators+symbols&client=firefox-b-d&sca_esv=584142833&ei=Q_pbZdS1JovPkPIPoL6-kAw&oq=word+delimiters+s&gs_lp=Egxnd3Mtd2l6LXNlcnAiEXdvcmQgZGVsaW1pdGVycyBzKgIIADIIEAAYFhgeGA8yCBAAGBYYHhgPMggQABgWGB4YDzIGEAAYFhgeMgYQABgWGB4yCxAAGBYYHhjxBBgKMggQABgWGB4YDzILEAAYgAQYigUYhgNIqA9QjAJYyARwAXgBkAEAmAGIAaAB-AGqAQMwLjK4AQPIAQD4AQHCAgoQABhHGNYEGLADwgIFEAAYgATiAwQYACBBiAYBkAYI&sclient=gws-wiz-serp#ip=1
