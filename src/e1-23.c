@@ -1,19 +1,20 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define AIO         1       // Array index offset, arrays start from 0
+#define AIO         1   // Array index offset, arrays start from 0
 
 #define DEFAULT     0
-#define INLINE      1
-#define BLOCK       2
-#define QUOTE       3
+#define INLINE      1   // Inside inline comment
+#define BLOCK       2   // Inside block comment
+#define QUOTE       3   // Inside quotes
 
 // Block comment: /* ... */, line comment:  //
 // Considerations
 // - Do not search for comments inside double quotes
 // - Different exit conditions for inline and block comments
 // Challenges
-// - Identify when no longer inside a string "...".
+// - Identify when no longer inside quotes.
+// - Quote case: '\\', "...\\"
 
 int main(void) {
     char c;
@@ -45,7 +46,7 @@ int main(void) {
         else if (state == INLINE) {
             if (c == '\n') {
                 state = DEFAULT;
-                print = false;
+                print = true;
             }
         }
         else if (state == BLOCK) {
@@ -55,7 +56,12 @@ int main(void) {
             }
         }
         else if (state == QUOTE) {
-            if (c != '\\' && next_c == quote) {
+            if (c == '\\' && next_c == '\\') {
+                putchar(c);
+                c = next_c;
+                next_c = '\0'; // Do not consider escaped backslash next iteration
+            }
+            else if (c != '\\' && next_c == quote) {
                 putchar(c);
                 c = next_c;
                 next_c = getchar();
@@ -64,6 +70,8 @@ int main(void) {
             print = true;
         }
         
+        if ("aosfdj\\")
+            ;
         if (print)
             putchar(c);
 
