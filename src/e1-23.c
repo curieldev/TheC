@@ -3,59 +3,73 @@
 
 #define AIO         1       // Array index offset, arrays start from 0
 
-#define IN_QUOTE    1
-#define OUT_QUOTE   0
+#define DEFAULT     0
+#define INLINE      1
+#define BLOCK       2
+#define QUOTE       3
 
 // Block comment: /* ... */, line comment:  //
 // Considerations
 // - Do not search for comments inside double quotes
-// Special cases
-// - Ignore: "//", "/*", "\""
-// - '\"', '\''
+// - Different exit conditions for inline and block comments
 // Challenges
 // - Identify when no longer inside a string "...".
 
-static void ignore_quoted(const char q) {
-    char c = '\0';
-    char prev_c;
-
-    do {
-        prev_c = c;
-        c = getchar();
-    } while (c != q || prev_c == '\\');
-}
-
-static void ignore_until(char u) {
-    char c;
-    do
-        c = getchar();
-    while (c != u);
-}
-
-static void ignore_inline() {
-}
-
-static void ignore_block() {
-}
-
 int main(void) {
     char c;
-    char prev_c;
+    char next_c;
     char quote;
     int state;
 
-    state = OUT_QUOTE;
-    while ((c = getchar()) != EOF) {
-        if ((c == '\"' || c == '\'') && state == OUT_QUOTE) {
-            state = IN_QUOTE;
-            quote = c;
-        }
-        else 
-            ;
+    state = DEFAULT;
+    c = getchar();
+    while ((next_c = getchar()) != EOF) {
+        bool print = false;
 
-        putchar(c);
-        prev_c = c;
+        if (state == DEFAULT) {
+            if (c == '/' && next_c == '/') {
+                state = INLINE;
+            }
+            else if (c == '/' && next_c == '*') {
+                state = BLOCK;
+            }
+            else if (c == '\"' || c == '\'') {
+                state = QUOTE;
+                quote = c;
+                print = true;
+            }
+            else {
+                print = true;
+            }
+        }
+        else if (state == INLINE) {
+            if (c == '\n') {
+                state = DEFAULT;
+                print = false;
+            }
+        }
+        else if (state == BLOCK) {
+            if (c == '*' && next_c == '/') {
+                next_c = getchar();
+                state = DEFAULT;
+            }
+        }
+        else if (state == QUOTE) {
+            if (c != '\\' && next_c == quote) {
+                putchar(c);
+                c = next_c;
+                next_c = getchar();
+                state = DEFAULT;
+            }
+            print = true;
+        }
+        
+        if (print)
+            putchar(c);
+
+        c = next_c;
     }
+    putchar(c); // Print last character
 
     return 0;
 }
