@@ -70,8 +70,6 @@ int main(void) {
             print = true;
         }
         
-        if ("aosfdj\\")
-            ;
         if (print)
             putchar(c);
 
