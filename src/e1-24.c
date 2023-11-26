@@ -30,28 +30,37 @@
 // quotes
 
 static int get_pair_type(char c) {
+    int result;
+
     if (c == '{' || c == '(' || c == '[')
-        return OPENING_PAIR;
+        result = OPENING_PAIR;
     else if (c == '}' || c == ')' || c == ']')
-        return CLOSING_PAIR;
+        result = CLOSING_PAIR;
     else
-        return NONE;
+        result = NONE;
+
+    return result;
 }
+
 static char get_pair(char c) {
+    int result;
+
     if (c == '{')
-        return '}';
+        result =  '}';
     else if (c == '(')
-        return ')';
+        result =  ')';
     else if (c == '[')
-        return ']';
+        result =  ']';
     else if (c == '}')
-        return '{';
+        result =  '{';
     else if (c == ']')
-        return '[';
+        result =  '[';
     else if (c == ')')
-        return '(';
+        result =  '(';
     else
-        return '\0';
+        result =  '\0';
+
+    return result;
 }
 
 int main(void) {
