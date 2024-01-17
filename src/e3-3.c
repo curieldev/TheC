@@ -32,7 +32,7 @@ static int is_expandable(char start, char end) {
         result = FALSE;
     else if (!islower(start) &&  islower(end))
         result = FALSE;
-    else if (tolower(start) >= tolower(end))
+    else if (start >= end)
         result = FALSE;
     else if (isalpha(start) && isalpha(end))
         result = TRUE;
