@@ -5,7 +5,8 @@
 // Error cases
 //  a-0, 0-a
 //  b-b, 3-3
-//  
+//  e-R, E-R
+//  r-E, R-e
 // Special cases
 // -a-z, a-b-c
 
@@ -14,11 +15,24 @@
 #define FALSE   0
 #define TRUE    1
 
+static int is_expansion(char const str[]) {
+    int result;
+    if (!isalnum(str[0]) || str[1] != '-' || !isalnum(str[2]))
+        result = FALSE;
+    else
+        result = TRUE;
 
-static int is_expansion_possible(char start, char end) {
+    return result;
+}
+
+static int is_expandable(char start, char end) {
     int result;
 
-    if (start >= end)
+    if (islower(start) && !islower(end))
+        result = FALSE;
+    else if (!islower(start) &&  islower(end))
+        result = FALSE;
+    else if (tolower(start) >= tolower(end))
         result = FALSE;
     else if (isalpha(start) && isalpha(end))
         result = TRUE;
@@ -35,18 +49,15 @@ static void expand(char from[], char to[]) {
     int o = 0;
 
     while (from[i] != '\0' && i < MAXSTR - 1) {
-        if (!isalnum(from[i]) || from[i + 1] != '-' || !isalnum(from[i + 2])) {
+        if (!is_expansion(&from[i]) || !is_expandable(from[i], from[i + 2])) {
             to[o++] = from[i];
         }
-        else if (is_expansion_possible(from[i], from[i + 2])) {
+        else {
             for (int c = from[i]; c < from[i + 2]; c++) {
                 to[o++] = c;
             }
             i++; // To start next iteration at the end of this expansion,
                  // in case another expansion is linked, e.g. a-d-f
-        }
-        else {
-            to[o++] = from[i];
         }
         i++;
     }
@@ -55,14 +66,14 @@ static void expand(char from[], char to[]) {
 }
 
 int main(int argc, char *argv[]) {
-    char test_string[] = "The alphabet is A-Z or a-z, a-as far as I'm concerned"
-                         ", there's 2-7 letters not 7-2.";
+    char text[MAXSTR];
     char expanded[MAXSTR];
-    printf("Input string:\n %s\n", test_string);
 
-    expand(test_string, expanded);
-
-    printf("Expanded string:\n %s\n", expanded);
+    if(fgets(text, MAXSTR, stdin) != NULL) {
+        printf("Input string:\n%s\n", text);
+        expand(text, expanded);
+        printf("Expanded string:\n%s\n", expanded);
+    }
 
     return 0;
 }
