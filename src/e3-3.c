@@ -25,7 +25,7 @@ static int is_expansion(char const str[]) {
     return result;
 }
 
-static int is_expandable(char start, char end) {
+static int is_expandable(char const start, char const end) {
     int result;
 
     if (islower(start) && !islower(end))
@@ -44,7 +44,7 @@ static int is_expandable(char start, char end) {
     return result;
 }
 
-static void expand(char from[], char to[]) {
+static void expand(char const from[], char to[]) {
     int i = 0;
     int o = 0;
 
