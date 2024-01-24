@@ -5,13 +5,8 @@
 #define NOT_OK      0
 #define OK          1
 
-#define MAX_BASE    36
-#define MIN_BASE    2
-
-static char number_table[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 // Reverse a string
-static void reverse(char s[]) {
+void reverse(char s[]) {
     char temp;
     int length = 0;
 
@@ -31,14 +26,24 @@ static void reverse(char s[]) {
     }
 }
 
-static void itob(int n, char s[], int b) {
-    int i = 0;
+static void itoa(int n, char s[], int w) {
+    int i, sign;
+    long num = n;
 
-    while (n > 0) {
-        int remainder = n % b;
-        s[i++] = number_table[remainder];
-        n /= b;
-    }
+    if ((sign = n) < 0) // record sign
+        num = -num;
+
+    i = 0;
+    do { // generate digits in reverse order
+        s[i++] = num % 10 + '0'; // get next digit
+    } while ((num /= 10) > 0); // delete it
+
+    if (sign < 0)
+        s[i++] = '-';
+
+    while (i < w)
+        s[i++] = ' ';
+
     s[i] = '\0';
     reverse(s);
 }
@@ -58,9 +63,9 @@ static int read_line(char line[], char const prompt[]) {
 
 int main(int argc, char *argv[]) {
     char line[MAXLINE];         // Input line
-    int base10_int;
-    int target_base;
-    char prompt[] = "Enter a number and its target number base,\n"
+    int integer;                // Integer to convert
+    int width;
+    char prompt[] = "Enter a number and the minimum width of the output,\n"
                     "separated by a blank space. for example: 10 2";
 
     int read_status;
@@ -68,16 +73,8 @@ int main(int argc, char *argv[]) {
         if (read_line(line, prompt) != OK) {
             read_status = NOT_OK;
         }
-        else if (sscanf(line, "%d %d", &base10_int, &target_base) != 2) {
+        else if (sscanf(line, "%d %d", &integer, &width) != 2) {
             puts("Two numbers are expected\n");
-            read_status = NOT_OK;
-        }
-        else if (base10_int < 1) {
-            puts("Only non-zero positive numbers allowed\n");
-            read_status = NOT_OK;
-        }
-        else if (target_base < MIN_BASE || target_base > MAX_BASE) {
-            printf("Valid number base range is [%d, %d]\n", MIN_BASE, MAX_BASE);
             read_status = NOT_OK;
         }
         else {
@@ -85,12 +82,11 @@ int main(int argc, char *argv[]) {
         }
     } while (read_status != OK);
 
-    printf("Number in base 10: %u\n", base10_int);
-
     char result[MAXLINE];       // Result of conversion
-    itob(base10_int, result, target_base);
 
-    printf("Number in base %u: %s\n", target_base, result);
-
+    printf("Input as integer: %d\n", integer);
+    itoa(integer, result, width);
+    printf("Result as char[]: %s\n", result);
     return 0;
 }
+
