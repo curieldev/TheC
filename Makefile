@@ -4,7 +4,7 @@ OUTDIR = build
 all: $(CHAPTERS)
 
 $(CHAPTERS): %:
-	@make --no-print-directory -C $@
+	@$(MAKE) --no-print-directory -C $@
 
 clean:
 	rm -r $(OUTDIR)
