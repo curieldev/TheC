@@ -1,5 +1,6 @@
-CHAPTERS = $(wildcard src/*)
-OUTDIR = build
+CHAPTERS	= $(wildcard src/*)
+OUTDIR		= bin
+MAKEFLAGS	= --no-print-directory
 
 all: $(CHAPTERS)
 
