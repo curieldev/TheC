@@ -41,7 +41,7 @@ double atof(char s[]) {
 
     for (decimals = 0.0; isdigit(s[i]); i++) {
         val = 10.0 * val + (s[i] - '0');
-        decimals -= 1.0;
+        decimals += 1.0;
     }
 
     if (s[i] == 'e' || s[i] == 'E')
@@ -55,7 +55,7 @@ double atof(char s[]) {
         exponent = 10.0 * exponent + (s[i] - '0');
     }
 
-    return sign * val * pow(10.0, decimals + (e_sign * exponent));
+    return sign * val * pow(10.0, (-1 * decimals) + (e_sign * exponent));
 }
 
 int main(int argc, char *argv[]) {
