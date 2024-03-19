@@ -1,22 +1,27 @@
-OUTDIR = ../../build
+OUTDIR	= ../../bin
 
 SOURCES = $(wildcard *.c)
-EXECS	= $(addprefix $(OUTDIR)/,$(basename $(SOURCES)))
+BINS	= $(addprefix $(OUTDIR)/,$(basename $(SOURCES)))
 OBJS 	= $(SOURCES:.c=.o)
 
-CC		:= gcc
-CFLAGS  += -Wall
-LDLIBS	+= -lm
-CSTD	?= -std=c99
+CC		= gcc
+CSTD	= -std=c99
+LDLIBS	= -lm
+LDFLAGS =
+
+# LDLIBS should be placed after source files
+CFLAGS  = -Wall $(CSTD) $(LDLIBS) $(LDFLAGS)
 
 
-all: $(EXECS)
+all: $(BINS)
 
-$(OUTDIR)/%: %.o
-	@mkdir -p $(OUTDIR)
-	$(CC) $(CFLAGS) $(LDLIBS) $(CSTD) $< -o $@
+$(OUTDIR)/%: %.o | $(OUTDIR)
+	$(CC) $< -o $@ $(CFLAGS)
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(LDLIBS) $(CSTD) -c $< -o $@
+	$(CC) -c $< -o $@ $(CFLAGS)
+
+$(OUTDIR):
+	@mkdir -p $@
 
 .SECONDARY: $(OBJS)
